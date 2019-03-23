@@ -1,0 +1,80 @@
+.form {
+  max-width: 600px;
+  width: 100%;
+  margin: 20px auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+.form__row {
+  width: 100%;
+  display: flex;
+  margin: 20px 0;
+}
+
+.form-info {
+  width: 100%;
+}
+
+.form-info__title {
+  font-size: 16px;
+  color: #9299a2;
+}
+
+.form-info__value {
+  font-size: 24px;
+  line-height: 36px;
+}
+
+.form-input {
+  width: 100%;
+  background-color: #eef2f7;
+  padding: 15px;
+  box-sizing: border-box;
+  margin-bottom: 15px;
+}
+
+.form-input-left {
+  margin-right: 1px;
+  border-radius: 5px 0 0 5px;
+}
+
+.form-input-right {
+  margin-left: 1px;
+  border-radius: 0 5px 5px 0;
+}
+
+.form-input__label {
+  font-size: 14px;
+  margin-bottom: 5px;
+  color: #9299a2;
+  display: block;
+}
+
+.form-input__input {
+  border: 0;
+  background-color: inherit;
+  font-size: 18px;
+  outline: none;
+}
+
+.form-button {
+  width: 100%;
+  border: 0;
+  border-radius: 5px;
+  background-color: #ffdd2d;
+  padding: 20px;
+  font-size: 16px;
+  line-height: 16px;
+  cursor: pointer;
+}
+
+.form-button:hover, .form-button:focus {
+ background-color: #ffcd33;
+}
+
+.form-info__comission {
+  padding: 20px 25px;
+  font-size: 14px;
+  line-height: 16px;
+}
