@@ -12,8 +12,11 @@ window.addEventListener('DOMContentLoaded', () => {
   }
 
   function lotsHandler(event) {
-    const value = (this.value < totalLots) ? this.value : totalLots;
+    let value = this.value.replace(/\D/g, '');
 
+    if (value > totalLots) {
+      value = totalLots;
+    }
     setValue(value, value * pricePerLot);
   }
 
