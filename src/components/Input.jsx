@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 const Input = props => (
   <div className={`form-input ${props.className}`}>
@@ -7,4 +8,16 @@ const Input = props => (
   </div>
 );
 
+Input.propTypes = {
+  className: PropTypes.string.isRequired,
+  id: PropTypes.string.isRequired,
+  label: PropTypes.string.isRequired,
+  type: PropTypes.string.isRequired,
+  name: PropTypes.string.isRequired,
+  value: PropTypes.string.isRequired,
+  handleInput: PropTypes.func.isRequired
+
+};
+
 export default Input;
+

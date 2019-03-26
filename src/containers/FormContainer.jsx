@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 
+import Info from '../components/Info';
 import Input from '../components/Input';
 import Button from '../components/Button';
 
@@ -17,7 +19,9 @@ class FormContainer extends Component {
   async setFullPrice() {
     const { fullPrice: { value } } = await this.props.getFullPrice();
 
-    this.state.buttonValue = this.sumOutput(value);
+    this.setState({
+      buttonValue: this.sumOutput(value)
+    });
   }
 
   setValue(num, sum) {
@@ -32,39 +36,47 @@ class FormContainer extends Component {
     return String(sum).replace(/(\d)(?=(\d{3})+([^\d]|$))/g, '$1 ');
   }
 
-  lotsHandler(event) {
+  lotsHandler = event => {
+    const { totalLots, pricePerLot } = this.props;
     let value = event.target.value.replace(/\D/g, '');
 
-    if (value > this.props.totalLots) {
-      value = this.props.totalLots;
+    if (value > totalLots) {
+      value = totalLots;
     }
-    this.setValue(value, value * this.props.pricePerLot);
-  }
+    this.setValue(value, value * pricePerLot);
+  };
 
-  sumHandler(event) {
+  sumHandler = event => {
+    const { totalLots, pricePerLot } = this.props;
+    const { numOfLots } = this.state;
     let value = event.target.value.replace(/\D/g, '');
 
     if (event.type === 'blur') {
-      value = this.state.numOfLots * this.props.pricePerLot;
+      value = numOfLots * pricePerLot;
     }
-    if (value > this.props.totalLots * this.props.pricePerLot) {
-      value = this.props.totalLots * this.props.pricePerLot;
+    if (value > totalLots * pricePerLot) {
+      value = totalLots * pricePerLot;
     }
-    this.setValue(Math.floor(value / this.props.pricePerLot), value);
-  }
+    this.setValue(Math.floor(value / pricePerLot), value);
+  };
 
   render() {
+    const { totalLots, pricePerLot } = this.props;
+    const { numOfLots, buttonValue, sumOfSale } = this.state;
+
     return (
       <form className="form">
         <div className="form__row">
-          <div className="form-info">
-            <div className="form-info__title">1 лот = 100 акций</div>
-            <div className="form-info__value">{this.sumOutput(this.props.pricePerLot)} ₽</div>
-          </div>
-          <div className="form-info">
-            <div className="form-info__title">Доступно для продажи</div>
-            <div className="form-info__value">{this.props.totalLots} лотов</div>
-          </div>
+          <Info
+            title="1 лот = 100 акций"
+            value={this.sumOutput(pricePerLot)}
+            cur="₽"
+          />
+          <Info
+            title="Доступно для продажи"
+            value={totalLots}
+            cur="лотов"
+          />
         </div>
         <div className="form__row">
           <Input
@@ -73,8 +85,8 @@ class FormContainer extends Component {
             id="num-of-lots"
             type="text"
             name="lots"
-            value={this.state.numOfLots}
-            handleInput={this.lotsHandler.bind(this)}
+            value={numOfLots}
+            handleInput={this.lotsHandler}
           />
           <Input
             className="form-input-right"
@@ -82,12 +94,14 @@ class FormContainer extends Component {
             id="sum-of-sale"
             type="text"
             name="sum"
-            value={this.state.sumOfSale}
-            handleInput={this.sumHandler.bind(this)}
+            value={sumOfSale}
+            handleInput={this.sumHandler}
           />
         </div>
         <div className="form__row">
-          <Button value={this.state.buttonValue} />
+          <div className="form-info">
+            <Button value={buttonValue} />
+          </div>
           <div className="form-info">
             <div className="form-info__comission">Включая комиссию <span id="comission">45</span> ₽</div>
           </div>
@@ -96,5 +110,11 @@ class FormContainer extends Component {
     );
   }
 }
+
+FormContainer.propTypes = {
+  pricePerLot: PropTypes.number.isRequired,
+  totalLots: PropTypes.number.isRequired,
+  getFullPrice: PropTypes.func.isRequired
+};
 
 export default FormContainer;
