@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 
 const Button = props => (
-  <button className="form-button">Продать на {props.value} ₽</button>
+  <button className="form-button">Продать {(props.value) ? `на ${props.value} ₽` : ''}</button>
 );
 
 Button.propTypes = {

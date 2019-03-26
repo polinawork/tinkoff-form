@@ -10,7 +10,10 @@ const Info = props => (
 
 Info.propTypes = {
   title: PropTypes.string.isRequired,
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([
+    PropTypes.string.isRequired,
+    PropTypes.number.isRequired
+  ]),
   cur: PropTypes.string.isRequired
 };
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { debounce } from 'debounce';
 
 import Info from '../components/Info';
 import Input from '../components/Input';
@@ -10,19 +11,23 @@ class FormContainer extends Component {
     super(props);
 
     this.state = {
-      buttonValue: '100 000',
-      numOfLots: 1,
-      sumOfSale: '100 000'
+      fullPrice: {},
+      comission: {},
+      numOfLots: '',
+      sumOfSale: ''
     };
   }
 
-  async setFullPrice() {
-    const { fullPrice: { value } } = await this.props.getFullPrice();
+  setFullPrice = debounce(async() => {
+    const { getFullPrice } = this.props;
+    const { numOfLots } = this.state;
+    const { fullPrice, comission } = await getFullPrice(numOfLots);
 
     this.setState({
-      buttonValue: this.sumOutput(value)
+      fullPrice,
+      comission
     });
-  }
+  }, 1000);
 
   setValue(num, sum) {
     this.setState({
@@ -37,32 +42,24 @@ class FormContainer extends Component {
   }
 
   lotsHandler = event => {
-    const { totalLots, pricePerLot } = this.props;
-    let value = event.target.value.replace(/\D/g, '');
+    const { pricePerLot } = this.props;
+    const valueLots = event.target.value.replace(/\D/g, '');
+    const valueSum = (valueLots) ? valueLots * pricePerLot : '';
 
-    if (value > totalLots) {
-      value = totalLots;
-    }
-    this.setValue(value, value * pricePerLot);
+    this.setValue(valueLots, valueSum);
   };
 
   sumHandler = event => {
-    const { totalLots, pricePerLot } = this.props;
-    const { numOfLots } = this.state;
-    let value = event.target.value.replace(/\D/g, '');
+    const { pricePerLot } = this.props;
+    const valueSum = event.target.value.replace(/\D/g, '');
+    const valueLots = (valueSum) ? Math.floor(valueSum / pricePerLot) : '';
 
-    if (event.type === 'blur') {
-      value = numOfLots * pricePerLot;
-    }
-    if (value > totalLots * pricePerLot) {
-      value = totalLots * pricePerLot;
-    }
-    this.setValue(Math.floor(value / pricePerLot), value);
+    this.setValue(valueLots, valueSum);
   };
 
   render() {
     const { totalLots, pricePerLot } = this.props;
-    const { numOfLots, buttonValue, sumOfSale } = this.state;
+    const { numOfLots, sumOfSale, fullPrice, comission } = this.state;
 
     return (
       <form className="form">
@@ -90,7 +87,7 @@ class FormContainer extends Component {
           />
           <Input
             className="form-input-right"
-            label="Сумма продажии, ₽"
+            label="Сумма продажи, ₽"
             id="sum-of-sale"
             type="text"
             name="sum"
@@ -100,10 +97,10 @@ class FormContainer extends Component {
         </div>
         <div className="form__row">
           <div className="form-info">
-            <Button value={buttonValue} />
+            <Button value={(fullPrice.value) ? this.sumOutput(fullPrice.value) : ''} />
           </div>
           <div className="form-info">
-            <div className="form-info__comission">Включая комиссию <span id="comission">45</span> ₽</div>
+            <div className="form-info__comission">{(comission.value) ? `Включая комиссию ${comission.value} ₽` : ''}</div>
           </div>
         </div>
       </form>
