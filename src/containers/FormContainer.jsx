@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { debounce } from 'debounce';
 
 import Info from '../components/Info';
 import Input from '../components/Input';
@@ -18,23 +17,31 @@ class FormContainer extends Component {
     };
   }
 
-  setFullPrice = debounce(async() => {
-    const { getFullPrice } = this.props;
-    const { numOfLots } = this.state;
-    const { fullPrice, comission } = await getFullPrice(numOfLots);
+  setFullPrice = (() => {
+    let lastPromise = 0;
 
-    this.setState({
-      fullPrice,
-      comission
-    });
-  }, 1000);
+    return async num => {
+      const { getFullPrice } = this.props;
+      const startPromise = Date.now();
+
+      lastPromise = startPromise;
+      const { fullPrice, comission } = await getFullPrice(num);
+
+      if (startPromise === lastPromise) {
+        this.setState({
+          fullPrice,
+          comission
+        });
+      }
+    };
+  })();
 
   setValue(num, sum) {
     this.setState({
       numOfLots: num,
       sumOfSale: this.sumOutput(sum)
     });
-    this.setFullPrice();
+    this.setFullPrice(num);
   }
 
   sumOutput(sum) {
@@ -97,10 +104,14 @@ class FormContainer extends Component {
         </div>
         <div className="form__row">
           <div className="form-info">
-            <Button value={(fullPrice.value) ? this.sumOutput(fullPrice.value) : ''} />
+            <Button
+              value={(fullPrice.value) ? this.sumOutput(fullPrice.value) : ''}
+            />
           </div>
           <div className="form-info">
-            <div className="form-info__comission">{(comission.value) ? `Включая комиссию ${comission.value} ₽` : ''}</div>
+            <div className="form-info__comission">
+              {(comission.value) ? `Включая комиссию ${comission.value} ₽` : ''}
+            </div>
           </div>
         </div>
       </form>
