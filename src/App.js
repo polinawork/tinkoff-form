@@ -5,7 +5,7 @@ class App extends Component {
   render() {
     return (
       <FormContainer
-        pricePerLot={100000}
+        pricePerLot={10000}
         totalLots={25}
         getFullPrice={() => Promise.resolve({
           fullPrice: { value: 100000, currency: 'RUB' },
